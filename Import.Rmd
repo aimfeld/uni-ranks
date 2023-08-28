@@ -10,7 +10,9 @@ output:
 # Data import
 ```{r}
 library(dplyr)
-df <- read.csv2('data/shanghai-world-university-ranking.csv', na.strings = "")
+df <- read.csv('data/shanghai-world-university-ranking.csv',
+               sep = ';',
+               na = "")
 df <- df %>% select(-Geo.Shape)
 ```
 ```{r}
