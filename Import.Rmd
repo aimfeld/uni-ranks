@@ -1,11 +1,24 @@
+---
+title: "Uni Ranks"
+author: "Andrea Valle & Adrian Imfeld"
+date: \today
+output: 
+  pdf_document:
+    number_sections: true
+---
+
 # Data import
 ```{r}
-library(tidyr)
+library(dplyr)
 df <- read.csv2('data/shanghai-world-university-ranking.csv', na.strings = "")
 df <- df %>% select(-Geo.Shape)
+```
+```{r}
 summary(df)
+```
+```{r}
 head(df)
+```
+```{r}
 str(df)
 ```
-
-
