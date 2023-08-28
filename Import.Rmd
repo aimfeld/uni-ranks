@@ -1,0 +1,11 @@
+# Data import
+```{r}
+library(tidyr)
+df <- read.csv2('data/shanghai-world-university-ranking.csv', na.strings = "")
+df <- df %>% select(-Geo.Shape)
+summary(df)
+head(df)
+str(df)
+```
+
+
