@@ -1,21 +1,18 @@
 # Data import
+
+The university rank dataset is was copied from https://www.webometrics.info/en/distribution_by_country.
+
 ```{r message=FALSE}
 library(dplyr)
-df_uni <- read.csv('data/shanghai-world-university-ranking.csv',
-                   sep = ';',
-                   na = "")
-df_uni <- df_uni %>% select(-Geo.Shape)
+df_ranks <- read.csv('data/webometrics.tsv', sep = '\t')
+
+# Set country rank based on row number
+df_ranks$RANK <- 1:nrow(df_ranks)
+```
+
+```{r}
+head(df_ranks)
 ```
 ```{r}
-summary(df_uni)
-```
-```{r}
-head(df_uni)
-```
-```{r}
-str(df_uni)
-```
-```{r}
-# Validate total scores
-df_uni$Total.score.check <- .1 * df_uni$Alumni + .2 * df_uni$Award + .2 *df_uni$Hi.Ci + .2 * df_uni$N.S + .2 * df_uni$PUB + .1 * df_uni$PCP
+str(df_ranks)
 ```
