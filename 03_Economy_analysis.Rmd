@@ -1,0 +1,63 @@
+---
+title: "Uni Ranks"
+author: "Andrea Valle & Adrian Imfeld"
+date: \today
+output: 
+  pdf_document:
+    number_sections: true
+---
+
+```{r}
+library(dplyr)
+library(tidyverse)
+```
+
+
+
+
+Research question:
+"Is there a relation between a level of education and GDP?"
+
+Loading gdp per capita 
+```{r}
+
+df_gdp_pc <- read.csv('data/gdp_per_capita.csv',
+               sep = ',')
+```
+
+
+Loading GDP
+```{r}
+df_gdp <- read.csv('data/gdp.csv')
+
+
+```
+
+
+```{r}
+
+years.analysis <- c("X2005", "X2006", "X2007", "X2008", "X2009", "X2010", "X2011", "X2012", "X2013", "X2014", "X2015", "X2016", "X2017",     "X2018")
+df_gdp <- pivot_longer(df_gdp, cols=years.analysis , names_to = "Year", values_to = "gdp.per_capita")
+df_gdp$Year <- as.numeric(substring(df_gdp$Year, 2))
+
+```
+
+We focus just from 2005 and 2018:
+```{r}
+
+df_gdp <- df_gdp[c('Country.Name', 'Code', 'Year', 'gdp.per_capita')]
+str(df_gdp)
+```
+
+Joining datasets:
+```{r}
+df_eco <- left_join(x = df, y = df_gdp,  by = c( "ISO3.CODE"= "Code", "Year" ))
+```
+
+
+```{r}
+df_eco
+```
+
+
+

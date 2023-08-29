@@ -13,6 +13,23 @@ df_ranks$RANK <- 1:nrow(df_ranks)
 ```{r}
 head(df_ranks)
 ```
+
+
+
 ```{r}
 str(df_ranks)
 ```
+
+
+Calculate the Total.score
+```{r}
+Total_score <- function(df) {
+  score <- df$Alumni*0.1 + df$Award*0.2 + df$Hi.Ci*0.2 + df$N.S*0.2 + df$PUB*0.2 + df$PCP*0.1
+  return(score)
+}
+
+
+df$Total_score <- Total_score(df)
+```
+
+
