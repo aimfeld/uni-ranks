@@ -2,13 +2,12 @@
 title: "Uni Ranks"
 author: "Andrea Valle & Adrian Imfeld"
 date: \today
-output:
+output: 
   pdf_document:
-    toc: yes
     number_sections: true
 ---
 
-```{r child = '01_Import.Rmd'}
-```
-```{r child = '02_Prepro.Rmd'}
+# Prepocessing
+```{r}
+library(dplyr)
 ```

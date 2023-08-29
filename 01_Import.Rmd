@@ -1,12 +1,3 @@
----
-title: "Uni Ranks"
-author: "Andrea Valle & Adrian Imfeld"
-date: \today
-output: 
-  pdf_document:
-    number_sections: true
----
-
 # Data import
 ```{r message=FALSE}
 library(dplyr)
