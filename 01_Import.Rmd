@@ -16,7 +16,6 @@ head(df_uni)
 str(df_uni)
 ```
 ```{r}
-# Validating total scores
+# Validate total scores
 df_uni$Total.score.check <- .1 * df_uni$Alumni + .2 * df_uni$Award + .2 *df_uni$Hi.Ci + .2 * df_uni$N.S + .2 * df_uni$PUB + .1 * df_uni$PCP
-df_check <- df_uni %>% select(World.rank.integer, University, Total.score, Total.score.check)
 ```
