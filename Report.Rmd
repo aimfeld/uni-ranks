@@ -7,11 +7,11 @@ output:
     toc: yes
     number_sections: true
 ---
-
-<!-- Chunk option: include = FALSE prevents code and results from appearing in the finished file. R Markdown still runs the code in the chunk, and the results can be used by other chunks. -->
 ```{r knitr-setup, include = FALSE}
 library(knitr)
-opts_chunk$set(message = FALSE, echo = FALSE)
+
+# By default, code (echo = FALSE) and output (results = FALSE) are not shown.
+opts_chunk$set(message = FALSE, echo = FALSE, results = FALSE)
 ```
 
 ```{r child = '01_Import.Rmd'}

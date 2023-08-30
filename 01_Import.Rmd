@@ -11,7 +11,7 @@ df_ranks <- read.csv('data/webometrics.tsv', sep = '\t')
 df_ranks$Rank <- 1:nrow(df_ranks)
 ```
 
-```{r}
+```{r results = TRUE}
 kable(head(df_ranks, 10))
 ```
 
@@ -19,7 +19,7 @@ kable(head(df_ranks, 10))
 
 Dataset: https://www.kaggle.com/datasets/joebeachcapital/shanghai-world-university-ranking
 
-```{r message=FALSE}
+```{r}
 library(dplyr)
 df_uni <- read.csv('data/shanghai-world-university-ranking.csv',
                    sep = ';',
@@ -30,7 +30,7 @@ df_uni <- df_uni %>% select(-c(Geo.Shape, Geo.Point.2D))
 # Rename columns
 df_uni <- df_uni %>% rename("Rank" = "World.rank.integer")
 ```
-```{r}
+```{r results = TRUE}
 kable(head(df_uni %>% select(c("World.rank", "Rank", "University", "Country")), 10))
 ```
 ```{r include = FALSE}
