@@ -1,18 +1,37 @@
 # Data import
 
-The university rank dataset is was copied from https://www.webometrics.info/en/distribution_by_country.
+## Countries ranked by universities
+
+Dataset: https://www.webometrics.info/en/distribution_by_country
 
 ```{r message=FALSE}
-library(dplyr)
 df_ranks <- read.csv('data/webometrics.tsv', sep = '\t')
 
 # Set country rank based on row number
-df_ranks$RANK <- 1:nrow(df_ranks)
+df_ranks$rank <- 1:nrow(df_ranks)
 ```
 
 ```{r}
 head(df_ranks)
 ```
+
+## University ranks
+
+Dataset: https://www.kaggle.com/datasets/joebeachcapital/shanghai-world-university-ranking
+
+```{r message=FALSE}
+library(dplyr)
+df_uni <- read.csv('data/shanghai-world-university-ranking.csv',
+                   sep = ';',
+                   na = "")
+df_uni <- df_uni %>% select(-Geo.Shape)
+```
 ```{r}
-str(df_ranks)
+head(df_uni)
+```
+```{r include = FALSE}
+str(df_uni)
+```
+```{r include = FALSE}
+summary(df_uni)
 ```
