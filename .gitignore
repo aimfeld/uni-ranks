@@ -1,1 +1,6 @@
 *.pdf
+.Rproj.user
+.RData
+.Rhistory
+uni-ranks.Rproj
+.idea

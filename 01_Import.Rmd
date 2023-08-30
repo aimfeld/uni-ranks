@@ -32,6 +32,17 @@ head(df_uni)
 ```{r include = FALSE}
 str(df_uni)
 ```
-```{r include = FALSE}
-summary(df_uni)
+
+
+Calculate the Total.score
+```{r}
+Total_score <- function(df) {
+  score <- df$Alumni*0.1 + df$Award*0.2 + df$Hi.Ci*0.2 + df$N.S*0.2 + df$PUB*0.2 + df$PCP*0.1
+  return(score)
+}
+
+
+df$Total_score <- Total_score(df)
 ```
+
+
