@@ -8,11 +8,14 @@ output:
     number_sections: true
 ---
 
+<!-- Chunk option: include = FALSE prevents code and results from appearing in the finished file. R Markdown still runs the code in the chunk, and the results can be used by other chunks. -->
+```{r knitr-setup, include = FALSE}
+library(knitr)
+opts_chunk$set(message = FALSE, echo = FALSE)
+```
+
 ```{r child = '01_Import.Rmd'}
 ```
 ```{r child = '02_Prepro.Rmd'}
 ```
 
-
-```{r child = '03_Economy_analysis.Rmd'}
-```

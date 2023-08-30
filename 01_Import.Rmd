@@ -4,15 +4,15 @@
 
 Dataset: https://www.webometrics.info/en/distribution_by_country
 
-```{r message=FALSE}
+```{r}
 df_ranks <- read.csv('data/webometrics.tsv', sep = '\t')
 
 # Set country rank based on row number
-df_ranks$rank <- 1:nrow(df_ranks)
+df_ranks$Rank <- 1:nrow(df_ranks)
 ```
 
 ```{r}
-head(df_ranks)
+kable(head(df_ranks, 10))
 ```
 
 ## University ranks
@@ -24,18 +24,23 @@ library(dplyr)
 df_uni <- read.csv('data/shanghai-world-university-ranking.csv',
                    sep = ';',
                    na = "")
-df_uni <- df_uni %>% select(-Geo.Shape)
+# Remove unnecessary columns
+df_uni <- df_uni %>% select(-c(Geo.Shape, Geo.Point.2D))
+
+# Rename columns
+df_uni <- df_uni %>% rename("Rank" = "World.rank.integer")
 ```
 ```{r}
-head(df_uni)
+kable(head(df_uni %>% select(c("World.rank", "Rank", "University", "Country")), 10))
 ```
 ```{r include = FALSE}
 str(df_uni)
 ```
 
 
-Validate the total score.
+
 ```{r}
+# Validate the total score.
 Total_score <- function(df) {
   score <- df$Alumni*0.1 + df$Award*0.2 + df$Hi.Ci*0.2 + df$N.S*0.2 + df$PUB*0.2 + df$PCP*0.1
   return(score)
