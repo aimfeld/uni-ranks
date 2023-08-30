@@ -13,6 +13,11 @@ library(knitr)
 # By default, code (echo = FALSE) and output (results = FALSE) are not shown.
 opts_chunk$set(message = FALSE, echo = FALSE, results = FALSE)
 ```
+```{r}
+# List of libraries
+library(dplyr)
+```
+
 
 ```{r child = '01_Import.Rmd'}
 ```

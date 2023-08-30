@@ -1,8 +1,8 @@
 # Data import
 
-## Countries ranked by universities
+## Countries ranked by universities (Webometrics)
 
-Dataset: https://www.webometrics.info/en/distribution_by_country
+- Dataset: https://www.webometrics.info/en/distribution_by_country
 
 ```{r}
 df_ranks <- read.csv('data/webometrics.tsv', sep = '\t')
@@ -15,9 +15,10 @@ df_ranks$Rank <- 1:nrow(df_ranks)
 kable(head(df_ranks, 10))
 ```
 
-## University ranks
+## University ranks (Shanghai rankings)
 
-Dataset: https://www.kaggle.com/datasets/joebeachcapital/shanghai-world-university-ranking
+- Name: Academic Ranking of World Universities (ARWU) - Shanghai Rankings from 2005-2018
+- Dataset: https://www.kaggle.com/datasets/joebeachcapital/shanghai-world-university-ranking
 
 ```{r}
 library(dplyr)
@@ -48,5 +49,29 @@ Total_score <- function(df) {
 
 df_uni$Total_score <- Total_score(df_uni)
 ```
+## Human Development Index (HDI)
 
+- Website: https://hdr.undp.org/data-center/human-development-index
+- Dataset: https://hdr.undp.org/sites/default/files/2021-22_HDR/HDR21-22_Composite_indices_complete_time_series.csv
+- Metadata: https://hdr.undp.org/sites/default/files/2021-22_HDR/HDR21-22_Composite_indices_metadata.xlsx
 
+```{r}
+df_hdi <- read.csv('data/HDR21-22_Composite_indices_complete_time_series.csv', sep = ',')
+
+# Select only years which are included in the shanghai uni rankings as well
+hdi_years <- 2005:2018
+
+# Select indicators from the HDI group only
+df_hdi <- df_hdi %>%
+         select(c(iso3, country, hdicode, hdi_rank_2021),
+                paste0("hdi_", hdi_years),    # Human Development Index (value)
+                paste0("le_", hdi_years),     # Life Expectancy at Birth (years)
+                paste0("eys_", hdi_years),    # Expected Years of Schooling (years)
+                paste0("mys_", hdi_years),    # Mean Years of Schooling (years)
+                paste0("gnipc_", hdi_years),  # Gross National Income Per Capita (2017 PPP$)
+         )
+```
+
+```{r results = TRUE}
+kable(head(df_hdi %>% select(c(iso3, country, hdicode, hdi_rank_2021, hdi_2005, hdi_2018, le_2005, le_2018)), 10))
+```
