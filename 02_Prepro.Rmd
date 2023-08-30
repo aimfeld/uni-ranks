@@ -14,6 +14,6 @@ df_uni <- df_uni %>%
 ```{r}
 df_uni_agg <- df_uni %>%
     group_by(ISO3.CODE, Country, Year) %>%
-    summarise(Points = sum(Points)) %>%
+    summarise(Points = sum(Points), Count = n()) %>%
     na.omit()
 ```
