@@ -1,6 +1,8 @@
-# Data import
+# Data preparation
 
-## Countries ranked by universities (Webometrics)
+## Datasets
+
+### Countries ranked by universities (Webometrics)
 
 - Dataset: https://www.webometrics.info/en/distribution_by_country
 
@@ -15,7 +17,7 @@ df_ranks$Rank <- 1:nrow(df_ranks)
 kable(head(df_ranks, 10))
 ```
 
-## University ranks (Shanghai rankings)
+### University ranks (Shanghai rankings)
 
 - Name: Academic Ranking of World Universities (ARWU) - Shanghai Rankings from 2005-2018
 - Dataset: https://www.kaggle.com/datasets/joebeachcapital/shanghai-world-university-ranking
@@ -37,8 +39,7 @@ kable(head(df_uni %>% select(c("World.rank", "Rank", "University", "Country")), 
 ```{r include = FALSE}
 str(df_uni)
 ```
-
-## Human Development Index (HDI)
+### Human Development Index (HDI)
 
 - Website: https://hdr.undp.org/data-center/human-development-index
 - Dataset: https://hdr.undp.org/sites/default/files/2021-22_HDR/HDR21-22_Composite_indices_complete_time_series.csv
@@ -63,4 +64,27 @@ df_hdi <- df_hdi %>%
 
 ```{r results = TRUE}
 kable(head(df_hdi %>% select(c(iso3, country, hdicode, hdi_rank_2021, hdi_2005, hdi_2018, le_2005, le_2018)), 10))
+```
+## Preparation
+
+```{r}
+# Validate the total score.
+Total_score <- function(df) {
+  score <- df$Alumni*0.1 + df$Award*0.2 + df$Hi.Ci*0.2 + df$N.S*0.2 + df$PUB*0.2 + df$PCP*0.1
+  return(score)
+}
+
+df_uni$Total_score <- Total_score(df_uni)
+```
+
+Aggregate university ranks per country per year.
+```{r}
+# Bin universities into ranges and assign points.
+df_uni <- df_uni %>%
+    mutate(Points = case_when(
+        Rank >= 1 & Rank < 10 ~ 100,
+        Rank >= 10 & Rank < 50 ~ 50,
+        Rank >= 50 & Rank < 100 ~ 25,
+        Rank >= 100 ~ 10
+  ))
 ```
