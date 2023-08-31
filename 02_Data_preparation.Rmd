@@ -6,6 +6,12 @@
 
 - Dataset: https://www.webometrics.info/en/distribution_by_country
 
+
+```{r}
+library(knitr)
+library(tidyr)
+library(dplyr)
+```
 ```{r}
 df_ranks <- read.csv('data/webometrics.tsv', sep = '\t')
 
@@ -23,12 +29,11 @@ kable(head(df_ranks, 10))
 - Dataset: https://www.kaggle.com/datasets/joebeachcapital/shanghai-world-university-ranking
 
 ```{r}
-library(dplyr)
 df_uni <- read.csv('data/shanghai-world-university-ranking.csv',
                    sep = ';',
                    na = "")
 # Remove unnecessary columns
-df_uni <- df_uni %>% select(-c(Geo.Shape, Geo.Point.2D))
+df_uni <- df_uni %>% select(-c(Geo.Shape))
 
 # Rename columns
 df_uni <- df_uni %>% rename("Rank" = "World.rank.integer")
@@ -96,3 +101,20 @@ df_uni_agg <- df_uni %>%
     summarise(Points = sum(Points), Count = n()) %>%
     na.omit()
 ```
+```{r}
+df_hdi_long <- pivot_longer(
+    df_hdi,
+    cols = -c(iso3, country, hdicode, hdi_rank_2021),
+    names_to = "feature",
+    values_to = "value")
+```
+```{r}
+df_hdi_long <- df_hdi_long %>%
+    separate(feature, into = c("indicator", "year"), sep = "_")
+```
+
+```{r}
+dfi_hdi_wide <- pivot_wider(
+    df_hdi_long, names_from = "indicator", values_from = "value")
+```
+
