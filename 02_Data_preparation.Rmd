@@ -13,10 +13,10 @@ library(tidyr)
 library(dplyr)
 ```
 ```{r}
-df_ranks <- read.csv('data/webometrics.tsv', sep = '\t')
-
-# Set country rank based on row number
-df_ranks$Rank <- 1:nrow(df_ranks)
+# df_ranks <- read.csv('data/webometrics.tsv', sep = '\t')
+#
+# # Set country rank based on row number
+# df_ranks$Rank <- 1:nrow(df_ranks)
 ```
 
 ```{r results = TRUE}
@@ -109,12 +109,26 @@ df_hdi_long <- pivot_longer(
     values_to = "value")
 ```
 ```{r}
+# Split feature into indicator and year columns
 df_hdi_long <- df_hdi_long %>%
     separate(feature, into = c("indicator", "year"), sep = "_")
+df_hdi_long$year <- as.integer(df_hdi_long$year)
 ```
 
 ```{r}
-dfi_hdi_wide <- pivot_wider(
+# Transform back to wide format with a column per indicator, but country and year as rows
+df_hdi <- pivot_wider(
     df_hdi_long, names_from = "indicator", values_from = "value")
+```
+```{r}
+df_hdi <- left_join(
+    df_hdi, df_uni_agg, by = c("year" = "Year", "iso3" = "ISO3.CODE"))
+
+df_hdi <- df_hdi %>%
+    select(-Country) %>%
+    rename(uni_score = Points, uni_count = Count)
+```
+```{r}
+write.csv(df_hdi, 'data/hdi.csv')
 ```
 
