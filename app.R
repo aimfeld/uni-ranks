@@ -2,7 +2,7 @@ library(shiny)
 library(plotly)
 library(dplyr)
 
-df_hdi <- read.csv('data/hdi.csv')
+df_hdi <- read.csv('app_data/hdi.csv')
 
 # Round all numeric columns to 2 digits
 df_hdi <- df_hdi %>% mutate(across(is.numeric, round, digits=2))
@@ -50,6 +50,14 @@ server <- function(input, output, session) {
     # Combine the selected variables into a new data frame
     selectedData <- reactive({
         df_hdi[df_hdi$year == input$year, ]
+    })
+    
+    # Adjust year range dynamically, based on selected KPIs and available data.
+    observe({
+        xKpi <- input$xAxis
+        yKpi <- input$yAxis
+        df_sub <- df_hdi[!is.na(df_hdi[[xKpi]]) & !is.na(df_hdi[[yKpi]]), c('year', xKpi, yKpi)]
+        updateSliderInput(session, "year", min = min(df_sub$year), max = max(df_sub$year))
     })
     
     # Plot

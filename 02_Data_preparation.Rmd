@@ -129,14 +129,6 @@ df_hdi <- df_hdi %>%
     rename(uni_score = Points, uni_count = Count)
 ```
 
-```{r}
-# Fill NA values in 'value' column with 0
-df_hdi <- df_hdi %>%
-  mutate(uni_score = replace_na(uni_score, 0)) %>%
-  mutate(uni_count = replace_na(uni_count, 0))
-```
-
-
 Add country region and continent.
 
 ```{r}
