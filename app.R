@@ -35,7 +35,7 @@ ui <- fluidPage(
             sliderInput(
                 "year", label = "Year",
                 min = min_year, value = min_year, max = max_year, 
-                step = 1, ticks = FALSE, sep = ""
+                step = 1, ticks = FALSE, sep = "", width = "100%"
             )
         )
     )
@@ -45,7 +45,7 @@ ui <- fluidPage(
 server <- function(input, output, session) {
     # Combine the selected variables into a new data frame
     selectedData <- reactive({
-        df_hdi[df_hdi$year == input$year, c(input$xAxis, input$yAxis)]
+        df_hdi[df_hdi$year == input$year, c(input$xAxis, input$yAxis, 'country')]
     })
     
     # Plot
@@ -57,7 +57,8 @@ server <- function(input, output, session) {
             y = ~get(input$yAxis), 
             type = 'scatter', 
             mode = 'markers',
-            hovertemplate = paste(
+            hovertemplate = paste0(
+                '<b>Country</b>: ', df$country, '<br>',
                 '<b>', kpi_labels[input$yAxis], '</b>: %{y}<br>',
                 '<b>', kpi_labels[input$xAxis], '</b>: %{x}',
                 '<extra></extra>'
@@ -71,7 +72,8 @@ server <- function(input, output, session) {
             yaxis = list(
                 title = kpi_labels[input$yAxis],
                 range = c(0, kpi_limits[input$yAxis])
-            )
+            ),
+            hoverlabel = list(align = "left")
         )
     })
 }
