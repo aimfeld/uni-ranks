@@ -13,7 +13,9 @@ kpis <- c(
     'Life Expectancy at Birth (years)' = 'le',
     'Expected Years of Schooling (years)' = 'eys',
     'Mean Years of Schooling (years)' = 'mys',
-    'Gross National Income Per Capita (2017 PPP$)' = 'gnipc'
+    'Gross National Income Per Capita (2017 PPP$)' = 'gnipc',
+    'Gender Development Index' = "gdi", 
+    'Gender Inequality Index' = 'gii'
 )
 kpi_labels = setNames(names(kpis), kpis)
 
@@ -34,7 +36,7 @@ ui <- fluidPage(
             plotlyOutput("plot"),
             sliderInput(
                 "year", label = "Year",
-                min = min_year, value = min_year, max = max_year, 
+                min = min_year, value = 2005, max = max_year, 
                 step = 1, ticks = FALSE, sep = "", width = "100%"
             )
         )

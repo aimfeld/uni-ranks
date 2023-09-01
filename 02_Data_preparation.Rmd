@@ -94,7 +94,8 @@ df_uni_agg <- df_uni %>%
 
 ```{r}
 # Select indicators from the HDI group only
-hdi_year_columns <- paste0("^", c("hdi", "le", "eys", "mys", "gnipc"), "_\\d{4}$")
+hdi_year_columns <- paste0(
+    "^", c("hdi", "le", "eys", "mys", "gnipc", "gdi", "gii"), "_\\d{4}$")
 df_hdi <- df_hdi %>%
     select(iso3, country, hdicode, hdi_rank_2021, matches(hdi_year_columns))
 ```
@@ -108,9 +109,9 @@ df_hdi_long <- pivot_longer(
     values_to = "value")
 ```
 ```{r}
-# Split feature into indicator and year columns
+# Split feature into indicator and year columns by using only the last separator
 df_hdi_long <- df_hdi_long %>%
-    separate(feature, into = c("indicator", "year"), sep = "_")
+    separate(feature, into = c("indicator", "year"), sep = "_(?=[^_]+$)", extra = "merge")
 df_hdi_long$year <- as.integer(df_hdi_long$year)
 ```
 
