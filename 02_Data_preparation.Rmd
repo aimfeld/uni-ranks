@@ -149,6 +149,6 @@ df_hdi <- df_hdi %>%
 ```
 
 ```{r}
-write.csv(df_hdi, 'data/hdi.csv')
+write.csv(df_hdi, 'app_data/hdi.csv')
 ```
 
