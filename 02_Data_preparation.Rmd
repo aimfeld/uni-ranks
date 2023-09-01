@@ -11,6 +11,7 @@
 library(knitr)
 library(tidyr)
 library(dplyr)
+library(countrycode)
 ```
 ```{r}
 # df_ranks <- read.csv('data/webometrics.tsv', sep = '\t')
@@ -20,7 +21,7 @@ library(dplyr)
 ```
 
 ```{r results = TRUE}
-kable(head(df_ranks, 10))
+# kable(head(df_ranks, 10))
 ```
 
 ### University ranks (Shanghai rankings)
@@ -82,6 +83,8 @@ Total_score <- function(df) {
 df_uni$Total_score <- Total_score(df_uni)
 ```
 
+### Univerity rank aggregation
+
 Calculate points per for each university based on rank.
 ```{r}
 # Bin universities into ranges and assign points.
@@ -101,6 +104,9 @@ df_uni_agg <- df_uni %>%
     summarise(Points = sum(Points), Count = n()) %>%
     na.omit()
 ```
+
+### HDI dataset
+
 ```{r}
 df_hdi_long <- pivot_longer(
     df_hdi,
@@ -128,6 +134,18 @@ df_hdi <- df_hdi %>%
     select(-Country) %>%
     rename(uni_score = Points, uni_count = Count)
 ```
+
+Add country region and continent.
+
+```{r}
+df_hdi <- df_hdi %>%
+    mutate(
+        region = countrycode(df_hdi$iso3, origin = "iso3c", destination = "region"),
+        continent = countrycode(df_hdi$iso3, origin = "iso3c", destination = "continent"),
+        .after = 'country'
+    )
+```
+
 ```{r}
 write.csv(df_hdi, 'data/hdi.csv')
 ```
