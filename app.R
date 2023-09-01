@@ -1,4 +1,5 @@
 library(shiny)
+library(plotly)
 
 df_hdi <- read.csv('data/hdi.csv')
 
@@ -25,7 +26,7 @@ ui <- fluidPage(
             selectInput("yAxis", 'y-Axis', kpis, selected = 'uni_score')
         ),
         mainPanel(
-            plotOutput("plot"),
+            plotlyOutput("plot"),
             sliderInput(
                 "year", label = "Year",
                 min = min_year, value = min_year, max = max_year, 
@@ -43,13 +44,23 @@ server <- function(input, output, session) {
     })
     
     # Plot
-    output$plot <- renderPlot({
+    output$plot <- renderPlotly({
         df <- selectedData()
-        plot(df, 
-             xlab = names(kpis)[kpis == input$xAxis],
-             ylab = names(kpis)[kpis == input$yAxis],
-             xlim = c(0, kpi_limits[input$xAxis]),
-             ylim = c(0, kpi_limits[input$yAxis])
+        plot_ly(
+            df,
+            x = ~get(input$xAxis),
+            y = ~get(input$yAxis), 
+            type = 'scatter', 
+            mode = 'markers'
+        ) %>% layout(
+            xaxis = list(
+                title = names(kpis)[kpis == input$xAxis],
+                range = c(0, kpi_limits[input$xAxis])
+            ),
+            yaxis = list(
+                title = names(kpis)[kpis == input$yAxis],
+                range = c(0, kpi_limits[input$yAxis])
+            )
         )
     })
 }
