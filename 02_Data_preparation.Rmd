@@ -13,14 +13,12 @@ library(tidyr)
 library(dplyr)
 library(countrycode)
 ```
-```{r}
+
+```{r results = TRUE}
 # df_ranks <- read.csv('data/webometrics.tsv', sep = '\t')
 #
 # # Set country rank based on row number
 # df_ranks$Rank <- 1:nrow(df_ranks)
-```
-
-```{r results = TRUE}
 # kable(head(df_ranks, 10))
 ```
 

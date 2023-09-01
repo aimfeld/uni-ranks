@@ -45,7 +45,7 @@ ui <- fluidPage(
 server <- function(input, output, session) {
     # Combine the selected variables into a new data frame
     selectedData <- reactive({
-        df_hdi[df_hdi$year == input$year, c(input$xAxis, input$yAxis, 'country')]
+        df_hdi[df_hdi$year == input$year, ]
     })
     
     # Plot
@@ -55,6 +55,7 @@ server <- function(input, output, session) {
             df,
             x = ~get(input$xAxis),
             y = ~get(input$yAxis), 
+            color = ~continent,
             type = 'scatter', 
             mode = 'markers',
             hovertemplate = paste0(
@@ -64,7 +65,6 @@ server <- function(input, output, session) {
                 '<extra></extra>'
             )
         ) %>% layout(
-            showlegend = FALSE, 
             xaxis = list(
                 title = kpi_labels[input$xAxis],
                 range = c(0, kpi_limits[input$xAxis])
