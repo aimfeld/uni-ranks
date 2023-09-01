@@ -9,6 +9,7 @@ df_hdi <- df_hdi %>% mutate(across(is.numeric, round, digits=2))
 
 kpis <- c(
     'University Score' = 'uni_score',
+    'Universities in top 500' = 'uni_count',
     'Human Development Index' = 'hdi',
     'Life Expectancy at Birth (years)' = 'le',
     'Expected Years of Schooling (years)' = 'eys',
@@ -30,7 +31,8 @@ ui <- fluidPage(
     sidebarLayout(
         sidebarPanel(
             selectInput("xAxis", 'x-Axis', kpis, selected = 'hdi'),
-            selectInput("yAxis", 'y-Axis', kpis, selected = 'uni_score')
+            selectInput("yAxis", 'y-Axis', kpis, selected = 'uni_score'),
+            selectInput("size", 'Size', kpis, selected = 'uni_count')
         ),
         mainPanel(
             plotlyOutput("plot"),
@@ -58,12 +60,14 @@ server <- function(input, output, session) {
             x = ~get(input$xAxis),
             y = ~get(input$yAxis), 
             color = ~continent,
+            size = ~get(input$size),
             type = 'scatter', 
             mode = 'markers',
             hovertemplate = paste0(
                 '<b>Country</b>: ', df$country, '<br>',
                 '<b>', kpi_labels[input$yAxis], '</b>: %{y}<br>',
-                '<b>', kpi_labels[input$xAxis], '</b>: %{x}',
+                '<b>', kpi_labels[input$xAxis], '</b>: %{x}<br>',
+                '<b>', kpi_labels[input$size], '</b>: ', df[, input$size],
                 '<extra></extra>'
             )
         ) %>% layout(
