@@ -54,9 +54,7 @@ server <- function(input, output, session) {
     
     # Adjust year range dynamically, based on selected KPIs and available data.
     observe({
-        xKpi <- input$xAxis
-        yKpi <- input$yAxis
-        df_sub <- df_hdi[!is.na(df_hdi[[xKpi]]) & !is.na(df_hdi[[yKpi]]), c('year', xKpi, yKpi)]
+        df_sub <- na.omit(df_hdi[, c('year', input$xAxis, input$yAxis, input$size)])
         updateSliderInput(session, "year", min = min(df_sub$year), max = max(df_sub$year))
     })
     
