@@ -1,7 +1,11 @@
 library(shiny)
 library(plotly)
+library(dplyr)
 
 df_hdi <- read.csv('data/hdi.csv')
+
+# Round all numeric columns to 2 digits
+df_hdi <- df_hdi %>% mutate(across(is.numeric, round, digits=2))
 
 kpis <- c(
     'University Score' = 'uni_score',
@@ -11,6 +15,7 @@ kpis <- c(
     'Mean Years of Schooling (years)' = 'mys',
     'Gross National Income Per Capita (2017 PPP$)' = 'gnipc'
 )
+kpi_labels = setNames(names(kpis), kpis)
 
 # Calculate limits
 min_year <- min(df_hdi$year)
@@ -51,14 +56,20 @@ server <- function(input, output, session) {
             x = ~get(input$xAxis),
             y = ~get(input$yAxis), 
             type = 'scatter', 
-            mode = 'markers'
+            mode = 'markers',
+            hovertemplate = paste(
+                '<b>', kpi_labels[input$yAxis], '</b>: %{y}<br>',
+                '<b>', kpi_labels[input$xAxis], '</b>: %{x}',
+                '<extra></extra>'
+            )
         ) %>% layout(
+            showlegend = FALSE, 
             xaxis = list(
-                title = names(kpis)[kpis == input$xAxis],
+                title = kpi_labels[input$xAxis],
                 range = c(0, kpi_limits[input$xAxis])
             ),
             yaxis = list(
-                title = names(kpis)[kpis == input$yAxis],
+                title = kpi_labels[input$yAxis],
                 range = c(0, kpi_limits[input$yAxis])
             )
         )
