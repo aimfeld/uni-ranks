@@ -22,9 +22,10 @@ kpis <- c(
 kpi_labels = setNames(names(kpis), kpis)
 
 # Calculate limits
-min_year <- min(df_hdi$year)
-max_year <- max(df_hdi$year)
-kpi_limits <- ceiling(apply(df_hdi[, kpis], 2, function(x) max(x, na.rm = TRUE)))
+year_min <- min(df_hdi$year)
+year_max <- max(df_hdi$year)
+kpi_min <- apply(df_hdi[, kpis], 2, function(x) min(x, na.rm = TRUE))
+kpi_max <- ceiling(apply(df_hdi[, kpis], 2, function(x) max(x, na.rm = TRUE)))
 
 # Country annotations
 annotations <- c(
@@ -50,7 +51,7 @@ ui <- fluidPage(
             plotlyOutput('plot'),
             sliderInput(
                 'year', label = 'Year',
-                min = min_year, value = 2005, max = max_year, 
+                min = year_min, value = 2005, max = year_max, 
                 step = 1, ticks = FALSE, sep = '', width = '100%'
             )
         )
@@ -93,11 +94,11 @@ server <- function(input, output, session) {
         ) %>% layout(
             xaxis = list(
                 title = kpi_labels[input$xAxis],
-                range = c(0, kpi_limits[input$xAxis])
+                range = c(kpi_min[input$xAxis], kpi_max[input$xAxis])
             ),
             yaxis = list(
                 title = kpi_labels[input$yAxis],
-                range = c(0, kpi_limits[input$yAxis])
+                range = c(kpi_min[input$yAxis], kpi_max[input$yAxis])
             ),
             hoverlabel = list(align = 'left')
         ) %>% add_text(
