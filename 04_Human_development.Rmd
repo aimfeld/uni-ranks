@@ -18,6 +18,11 @@ In terms of university scores, the US was dominating with 168 universities in th
 
 ![](img/uni-top-10-2023.png)
 
+The relationship between university scores and HDI is unclear. However, a clear pattern emerges if we look at university score _per capita_, correcting for country population size. There seems to be an exponential relationship between HDI and university score per capita. Notably, Switzerland is comes out on top due to its small country size and comparatively high number of quality universities.
+
+![](img/hdi-uni-score-pmc-2017.png)
+
+
 ## Top Swiss universities
 
 For being a very small country, Switzerland is doing very well in terms of top ranking universities and human development. There are consistently around 8 Swiss universities in the top 500. In 2023, the top Swiss universities include the following, spearheaded by the ETH Zürich with a rank of 20.

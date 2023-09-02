@@ -194,8 +194,12 @@ df_pop <- pivot_longer(
 ) %>% select(-indicator)
 df_pop$year <- as.integer(df_pop$year)
 df_hdi <- left_join(df_hdi, df_pop, by = c("year" = "year", "iso3" = "country"))
-
 ```
+```{r}
+# Adding university score per pmillion capita
+df_hdi$uni_score_pmc <- df_hdi$uni_score / df_hdi$population * 1000000
+```
+
 The dataset was transformed into a suitable format, containing a row per country and year, and columns for the indicators. After joining the transformed HDI dataset with the previously prepared university ranking data, world region and continent information was joined as well as country population data from the [world bank dataset](https://data.worldbank.org). This is the structure of the final dataset (some indicators are omitted):
 
 ```{r results = TRUE}

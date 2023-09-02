@@ -10,6 +10,7 @@ df_hdi <- df_hdi %>% mutate(across(is.numeric, round, digits=2))
 
 kpis <- c(
     'University Score' = 'uni_score',
+    'University Score per Capita' = 'uni_score_pmc',
     'Universities in top 500' = 'uni_count',
     'Human Development Index' = 'hdi',
     'Life Expectancy at Birth (years)' = 'le',
