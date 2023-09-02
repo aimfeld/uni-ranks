@@ -26,22 +26,32 @@ min_year <- min(df_hdi$year)
 max_year <- max(df_hdi$year)
 kpi_limits <- ceiling(apply(df_hdi[, kpis], 2, function(x) max(x, na.rm = TRUE)))
 
+# Country annotations
+annotations <- c(
+  DEU = 'Germany',
+  GBR = 'UK',
+  USA = 'US',
+  CHN = 'China'
+)
+df_hdi$annotation <- annotations[match(df_hdi$iso3, names(annotations))]
+
 # UI
 ui <- fluidPage(
-    theme = shinytheme("flatly"),
-    titlePanel("University Scores and Human Development Index"),
+    theme = shinytheme('flatly'),
+    titlePanel('University Scores and Human Development Index'),
     sidebarLayout(
         sidebarPanel(
-            selectInput("xAxis", 'x-Axis', kpis, selected = 'hdi'),
-            selectInput("yAxis", 'y-Axis', kpis, selected = 'uni_score'),
-            selectInput("size", 'Size', kpis, selected = 'uni_count')
+            selectInput('xAxis', 'x-Axis', kpis, selected = 'hdi'),
+            selectInput('yAxis', 'y-Axis', kpis, selected = 'uni_score'),
+            selectInput('size', 'Size', kpis, selected = 'uni_count'),
+            checkboxInput('annotate', 'Annotate countries', value = TRUE)
         ),
         mainPanel(
-            plotlyOutput("plot"),
+            plotlyOutput('plot'),
             sliderInput(
-                "year", label = "Year",
+                'year', label = 'Year',
                 min = min_year, value = 2005, max = max_year, 
-                step = 1, ticks = FALSE, sep = "", width = "100%"
+                step = 1, ticks = FALSE, sep = '', width = '100%'
             )
         )
     )
@@ -57,22 +67,24 @@ server <- function(input, output, session) {
     # Adjust year range dynamically, based on selected KPIs and available data.
     observe({
         df_sub <- na.omit(df_hdi[, c('year', input$xAxis, input$yAxis, input$size)])
-        updateSliderInput(session, "year", min = min(df_sub$year), max = max(df_sub$year))
+        updateSliderInput(session, 'year', min = min(df_sub$year), max = max(df_sub$year))
     })
     
     # Plot
     output$plot <- renderPlotly({
         df <- selectedData()
+        print(input$annotate)
         plot_ly(
             df,
             x = ~get(input$xAxis),
             y = ~get(input$yAxis), 
             color = ~continent,
             size = ~get(input$size),
+            text = if (input$annotate) ~annotation else NA,
             type = 'scatter', 
             mode = 'markers',
             hovertemplate = paste0(
-                '<b>Country</b>: ', df$country, '<br>',
+                '<b>Country</b>: ', df$country, ' (', df$iso3, ')', '<br>',
                 '<b>', kpi_labels[input$yAxis], '</b>: %{y}<br>',
                 '<b>', kpi_labels[input$xAxis], '</b>: %{x}<br>',
                 '<b>', kpi_labels[input$size], '</b>: ', df[, input$size],
@@ -87,7 +99,11 @@ server <- function(input, output, session) {
                 title = kpi_labels[input$yAxis],
                 range = c(0, kpi_limits[input$yAxis])
             ),
-            hoverlabel = list(align = "left")
+            hoverlabel = list(align = 'left')
+        ) %>% add_text(
+            showlegend = FALSE,
+            textposition = 'bottom left', 
+            textfont = list(size = 14)
         )
     })
 }
