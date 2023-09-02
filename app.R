@@ -1,4 +1,5 @@
 library(shiny)
+library(shinythemes)
 library(plotly)
 library(dplyr)
 
@@ -27,6 +28,7 @@ kpi_limits <- ceiling(apply(df_hdi[, kpis], 2, function(x) max(x, na.rm = TRUE))
 
 # UI
 ui <- fluidPage(
+    theme = shinytheme("flatly"),
     titlePanel("University Scores and Human Development Index"),
     sidebarLayout(
         sidebarPanel(
