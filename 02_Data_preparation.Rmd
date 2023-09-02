@@ -41,6 +41,15 @@ kable(head(df_uni %>% select(c("World.rank", "Rank", "Year", "University", "Coun
 ```{r}
 str(df_uni)
 ```
+```{r}
+# Show number of included universities per year (should be roughly 500 per year)
+df_uni %>% group_by(Year) %>% summarise(Count = n())
+```
+```{r}
+# Show unique ranks (ranks > 100 are binned)
+sort(unique(df_uni$Rank))
+```
+
 ### Economic dataset
 
 todo
