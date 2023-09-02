@@ -96,17 +96,40 @@ plot(ranks, scores, type='l', main="Exponential decay of rank score",
 grid(nx = NA, ny = NULL, lty = 2, col = "gray", lwd = 1)
 ```
 
-
-```{r}
+Once every university was assigned a score per year based on its rank, the scores were summed up and the universities counted per country and year. The aggregation resulted in the following structure, ready to be joined with the economic and HDI datasets:
+```{r results = TRUE}
 # Aggregate university ranks per country per year
 df_uni_agg <- df_uni %>%
     group_by(ISO3.CODE, Country, Year) %>%
     summarise(Points = sum(Points), Count = n()) %>%
     na.omit()
+
+kable(head(df_uni_agg %>% filter(ISO3.CODE == 'USA'), 5))
 ```
+
+### Economic dataset
+
+todo
 
 ### HDI dataset
 
+From the Human Development Index (HDI) dataset, the timelines of the following indicators of interest were picked:
+
+- Human Development Index -- a summary of a long and healthy life, access to knowledge and a decent standard of living.
+- Life expectancy at birth
+- Expected years of schooling
+- Mean years of schooling
+- Gross National Income (GNI) per capita
+- Gender Development Index (GDI) -- measures gender inequalities in achievement in three basic dimensions of human development:
+  - health, measured by female and male life expectancy at birth
+  - education, measured by female and male expected years of schooling for children and female and male mean years of schooling for adults ages 25 years and older
+  - command over economic resources, measured by female and male estimated earned income
+- Gender Inequality Index (GII) -- reflects gender-based disadvantage in three dimensions for as many countries as data of reasonable quality allow:
+  - reproductive health
+  - empowerment
+  - labourmarket
+
+For details on the indicators, see the [technical notes](https://hdr.undp.org/sites/default/files/2021-22_HDR/hdr2021-22_technical_notes.pdf).
 ```{r}
 # Select indicators from the HDI group only
 hdi_year_columns <- paste0(
@@ -144,7 +167,6 @@ df_hdi <- df_hdi %>%
     rename(uni_score = Points, uni_count = Count)
 ```
 
-Add country region and continent.
 
 ```{r}
 df_hdi <- df_hdi %>%
@@ -153,6 +175,17 @@ df_hdi <- df_hdi %>%
         continent = countrycode(df_hdi$iso3, origin = "iso3c", destination = "continent"),
         .after = 'country'
     )
+```
+
+The dataset was transformed into a suitable format, containing a row per country and year, and columns for the indicators. After joining the transformed HDI dataset with the previously prepared university ranking data, world region and continent information was added as well. This is the structure of the final dataset:
+
+```{r results = TRUE}
+kable(df_hdi %>%
+    mutate(across(is.numeric, round, digits=2)) %>%
+    select(c(country, continent, year, hdi, le, eys, mys, gnipc, gdi, gii, uni_score, uni_count)) %>%
+    filter(country == 'Germany' & year >= 2005) %>%
+    head(5)
+)
 ```
 
 ```{r}

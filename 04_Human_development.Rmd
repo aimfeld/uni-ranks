@@ -1,3 +1,13 @@
 # Human development
 
-todo
+## Interactive app
+
+In order to explore the relationships between the university rankings and the HDI indicators, an interactive R shiny app was built and published here: https://aimfeld.shinyapps.io/uni-ranks. The source code and data is available on [Github](https://github.com/aimfeld/uni-ranks).
+
+![](img/app-ui.png)
+
+The user interface allows for selecting an indicator for the x-axis, y-axis, and marker size. Development over time can be observed by dragging the year slider. Finally, some countries of interest annotations can be toggled on and off. Since the university ranking data only spans the years 2005-2018, the time range is adjusted dynamically when selecting the indicators.
+
+The app is inspired by the famous [Gapminder](https://www.gapminder.org/) animations, presented by Hans Rosling in a very entertaining [TED talk](https://www.ted.com/talks/hans_rosling_the_best_stats_you_ve_ever_seen).
+
+##
