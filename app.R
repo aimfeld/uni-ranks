@@ -52,7 +52,7 @@ ui <- fluidPage(
             sliderInput(
                 'year', label = 'Year',
                 min = year_min, value = 2005, max = year_max, 
-                step = 1, ticks = FALSE, sep = '', width = '100%'
+                step = 1, ticks = FALSE, sep = '', width = '90%'
             )
         )
     )
