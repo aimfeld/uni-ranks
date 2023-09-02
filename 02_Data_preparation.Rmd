@@ -168,8 +168,7 @@ df_hdi <- pivot_wider(
     df_hdi_long, names_from = "indicator", values_from = "value")
 ```
 ```{r}
-df_hdi <- left_join(
-    df_hdi, df_uni_agg, by = c("year" = "Year", "iso3" = "ISO3.CODE"))
+df_hdi <- left_join(df_hdi, df_uni_agg, by = c("year" = "Year", "iso3" = "ISO3.CODE"))
 
 df_hdi <- df_hdi %>%
     select(-Country) %>%
@@ -185,13 +184,24 @@ df_hdi <- df_hdi %>%
         .after = 'country'
     )
 ```
+```{r}
+# Joining population data from the world bank dataset
+df_pop <- pivot_longer(
+    world_bank_pop %>% filter(indicator == 'SP.POP.TOTL'),
+    cols = -c(country, indicator),
+    names_to = "year",
+    values_to = "population"
+) %>% select(-indicator)
+df_pop$year <- as.integer(df_pop$year)
+df_hdi <- left_join(df_hdi, df_pop, by = c("year" = "year", "iso3" = "country"))
 
-The dataset was transformed into a suitable format, containing a row per country and year, and columns for the indicators. After joining the transformed HDI dataset with the previously prepared university ranking data, world region and continent information was added as well. This is the structure of the final dataset:
+```
+The dataset was transformed into a suitable format, containing a row per country and year, and columns for the indicators. After joining the transformed HDI dataset with the previously prepared university ranking data, world region and continent information was joined as well as country population data from the [world bank dataset](https://data.worldbank.org). This is the structure of the final dataset (some indicators are omitted):
 
 ```{r results = TRUE}
 kable(df_hdi %>%
     mutate(across(is.numeric, round, digits=2)) %>%
-    select(c(country, continent, year, hdi, le, eys, mys, gnipc, gdi, gii, uni_score, uni_count)) %>%
+    select(c(country, continent, year, population, hdi, le, eys, mys, gnipc, uni_score, uni_count)) %>%
     filter(country == 'Germany' & year >= 2005) %>%
     head(5)
 )

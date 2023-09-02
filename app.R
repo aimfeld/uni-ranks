@@ -17,7 +17,8 @@ kpis <- c(
     'Mean Years of Schooling (years)' = 'mys',
     'Gross National Income Per Capita (2017 PPP$)' = 'gnipc',
     'Gender Development Index' = "gdi", 
-    'Gender Inequality Index' = 'gii'
+    'Gender Inequality Index' = 'gii',
+    'Population' = 'population'
 )
 kpi_labels = setNames(names(kpis), kpis)
 
@@ -32,7 +33,8 @@ annotations <- c(
   DEU = 'Germany',
   GBR = 'UK',
   USA = 'US',
-  CHN = 'China'
+  CHN = 'China',
+  CHE = 'Switzerland'
 )
 df_hdi$annotation <- annotations[match(df_hdi$iso3, names(annotations))]
 

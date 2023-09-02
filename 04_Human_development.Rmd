@@ -10,4 +10,20 @@ The user interface allows for selecting an indicator for the x-axis, y-axis, and
 
 The app is inspired by the famous [Gapminder](https://www.gapminder.org/) animations, presented by Hans Rosling in a very entertaining [TED talk](https://www.ted.com/talks/hans_rosling_the_best_stats_you_ve_ever_seen).
 
-##
+## University scores and human development
+
+![](img/hdi-uni-score.png)
+
+In terms of university scores, the US was dominating with 168 universities in the top 500 in 2005. Over the years, China has been catching up in number and ranking of top 500 universities as well as in human development. The decline in combined university scores of the US from 2005 to 2018 may be explained by Chinese universities entering the top 500 and displacing some of the lower ranked US universities. However, US dominance remains very strong. In 2023, the top ranks are is still heavily dominated by US universities. In fact, according to the [Shanghai rankings 2023](https://www.shanghairanking.com/rankings/arwu/2023), 20 of the top 30 are US universities whereas only 2 are Chinese. These are the top 10 universities in 2023:
+
+![](img/uni-top-10-2023.png)
+
+## Top Swiss universities
+
+For being a very small country, Switzerland is doing very well in terms of top ranking universities and human development. There are consistently around 8 Swiss universities in the top 500. In 2023, the top Swiss universities include the following, spearheaded by the ETH Zürich with a rank of 20.
+
+![](img/top-swiss-unis-2023.png)
+
+With respect to human development, Switzerland is equalled only by Norway with a HDI of 0.96.
+
+![](img/hdi-uni-score-swiss-2018.png)
