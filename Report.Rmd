@@ -1,5 +1,5 @@
 ---
-title: "Uni Ranks"
+title: "University rankings, economy, and human development"
 author: "Andrea Valle & Adrian Imfeld"
 date: \today
 output:
@@ -13,9 +13,7 @@ library(knitr)
 # By default, code (echo = FALSE) and output (results = FALSE) are not shown.
 opts_chunk$set(message = FALSE, echo = FALSE, results = FALSE)
 ```
-
-
-
+\newpage
 ```{r child = '01_Introduction.Rmd'}
 ```
 ```{r child = '02_Data_preparation.Rmd'}

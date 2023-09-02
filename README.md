@@ -1,1 +1,1 @@
-# uni-ranks
+# University rankings, economy, and human development
