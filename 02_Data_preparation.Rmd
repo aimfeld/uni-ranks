@@ -84,7 +84,7 @@ df_uni$Total_score <- Total_score(df_uni)
 
 ### Univerity rank aggregation
 
-In order to correlate the university rankings with economic and human development over time, we aggregated the university rankings per country and year. First, we assigned a score per university based on its rank according to an exponential decay model. The idea is to score top universities a lot higher and introduce an exponential decay in score for lower ranks. This approach was inspired by [webometrics](https://www.webometrics.info/en/distribution_by_country), which orders countries by the number of universities in top categories first.
+In order to correlate the university rankings with economic and human development over time, the university rankings were aggregated per country and year. First, a score was assigned per university based on its rank according to an exponential decay model. The idea is to score top universities a lot higher and introduce an exponential decay in score for lower ranks. This approach was inspired by [webometrics](https://www.webometrics.info/en/distribution_by_country), which orders countries by the number of universities in top categories first.
 
 ```{r results = TRUE}
 # University rank scoring parameters

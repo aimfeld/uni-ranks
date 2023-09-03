@@ -18,12 +18,30 @@ In terms of university scores, the US was dominating with 168 universities in th
 
 ![](img/uni-top-10-2023.png)
 
-The relationship between university scores and HDI is unclear. However, a clear pattern emerges if we look at university score _per capita_, correcting for country population size. There seems to be an exponential relationship between HDI and university score per capita. Notably, Switzerland is comes out on top due to its small country size and comparatively high number of quality universities.
+The relationship between university scores and HDI is unclear. However, an exponential relationship emerges if we look at university score _per capita_, correcting for country population size. Notably, Switzerland comes out on top due to its small country size and comparatively high number of quality universities.
 
-![](img/hdi-uni-score-pmc-2017.png)
+\begin{center}
+\includegraphics[width=0.7\textwidth]{img/hdi-uni-score-pmc-2017.png}
+\end{center}
+
+A very similar exponential pattern can be found between Gross National Income (GNI) and university score per capita. This is not surprising, since the GNI is part of the HDI.
+
+\begin{center}
+\includegraphics[width=0.7\textwidth]{img/gnipc-uni-score-pmc-2017.png}
+\end{center}
+
+## Education and gender inequality
+
+We might hypothesize that better education leads to less gender inequality. Indeed, the higher the university score per capita, the lower the gender inequality index. Asian countries seem to be behind in terms of gender equality and education, while European countries are doing quite well. Although the situation has been improving in Asia over time, as can be seen interactively by using the year slider.
+
+\begin{center}
+\includegraphics[width=0.7\textwidth]{img/uni-score-pmc-gii-2017.png}
+\end{center}
+
+While it's tempting to infer a causal relationship between education and gender equality, both of these variables may be mediated by hidden variables such as economic development or other factors.
 
 
-## Top Swiss universities
+## Switzerland
 
 For being a very small country, Switzerland is doing very well in terms of top ranking universities and human development. There are consistently around 8 Swiss universities in the top 500. In 2023, the top Swiss universities include the following, spearheaded by the ETH Zürich with a rank of 20.
 
@@ -31,4 +49,6 @@ For being a very small country, Switzerland is doing very well in terms of top r
 
 With respect to human development, Switzerland is equalled only by Norway with a HDI of 0.96.
 
-![](img/hdi-uni-score-swiss-2018.png)
+\begin{center}
+\includegraphics[width=0.7\textwidth]{img/hdi-uni-score-swiss-2018.png}
+\end{center}
