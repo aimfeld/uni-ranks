@@ -30,15 +30,17 @@ A very similar exponential pattern can be found between Gross National Income (G
 \includegraphics[width=0.7\textwidth]{img/gnipc-uni-score-pmc-2017.png}
 \end{center}
 
+Countries may start investing heavily into education, once a certain level of human development and wealth is reached which can lead to a positive feedback loop. Better education may in turn drive human development and GNI, which could explain the observed exponential relationship.
+
 ## Education and gender inequality
 
-We might hypothesize that better education leads to less gender inequality. Indeed, the higher the university score per capita, the lower the gender inequality index. Asian countries seem to be behind in terms of gender equality and education, while European countries are doing quite well. Although the situation has been improving in Asia over time, as can be seen interactively by using the year slider.
+We might hypothesize that better education leads to less gender inequality. Indeed, the higher the university score per capita, the lower the gender inequality index. Asian countries seem to lag behind in terms of gender equality and education, while European countries are doing quite well. However, the situation has been improving in Asia over time, as can be observed interactively by using the year slider in the app.
 
 \begin{center}
 \includegraphics[width=0.7\textwidth]{img/uni-score-pmc-gii-2017.png}
 \end{center}
 
-While it's tempting to infer a causal relationship between education and gender equality, both of these variables may be mediated by hidden variables such as economic development or other factors.
+While it's plausible to infer a causal relationship between education and gender equality, both of these variables may be mediated by hidden variables such as economic development or other factors.
 
 
 ## Switzerland
