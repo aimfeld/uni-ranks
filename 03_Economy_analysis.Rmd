@@ -168,7 +168,7 @@ fit_gam_qq <- function(category) {
     geom_point(color = "blue", size = 2, alpha = 0.6) +
     geom_abline(intercept = 0, slope = 1, color = "red", linetype = "dashed") +
     labs(
-      title = paste("QQ Plot ", category),
+      title = paste(category),
       x = "Theoretical Quantiles",
       y = "Sample Quantiles"
     ) +
