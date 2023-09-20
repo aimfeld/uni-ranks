@@ -29,6 +29,8 @@ The dataset contains a row per university and year, assigning a rank to each uni
 - Research Output, with PUB indicator (20% of the final mark)
 - Per Capita Performance, with PCP indicator (10% of the final mark)
 
+These factors and their respective weights are combined to calculate the total score for each university, which is then used to rank them in the dataset. This ranking provides valuable insights into the overall performance and reputation of universities over time.
+
 More on the methodology and definitions of the indicators can be found on their [methodology website](https://www.shanghairanking.com/methodology/arwu/2023). The structure of the dataset looks like this (indicators and ISO country codes are ommitted):
 
 ```{r results = TRUE}

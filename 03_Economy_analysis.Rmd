@@ -41,7 +41,7 @@ The exploratory analysis progresses by scrutinizing the factors that impact the 
 
 # Subset the DataFrame
 selected_df <- df %>%
-  select(Total.score, hdi, le, eys, mys, gnipc, gdi, gii,  uni_score_pmc, gdp.per_capita) %>%
+  select(Total.score, hdi, le, eys, mys, gnipc, gdi, gii, gdp.per_capita) %>%
   na.omit()
 
 # Create individual scatterplots using ggplot2
@@ -59,14 +59,15 @@ for (col_name in colnames(selected_df)[-1]) {  # Exclude Total.score
 
 grid.arrange(grobs = plots, ncol = 3)
 ```
+
 ## Modeling Total Score
-Utilizing correlation analysis, variables presenting non-linear patterns were identified. Subsequently, a Generalized Additive Model (GAM) was chosen to build the model, incorporating the following variables: Total.score, hdi, le, eys, mys, gnipc, gdi, gii, uni_score, uni_score_pmc, gdp.per_capita.
+Utilizing correlation analysis, variables presenting non-linear patterns were identified. Subsequently, a Generalized Additive Model (GAM) was chosen to build the model, incorporating the following variables: Total.score, hdi, le, eys, mys, gnipc, gdi, gii, uni_score, gdp.per_capita.
 
 
 
 ```{r results = TRUE}
 
-gam_model <- gam(Total.score ~ s(gdp.per_capita) + s(hdi) + s(le) + s(eys) + s(mys) + s(gnipc) + s(gdi) + s(gii)+ s(uni_score_pmc), 
+gam_model <- gam(Total.score ~ s(gdp.per_capita) + s(hdi) + s(le) + s(eys) + s(mys) + s(gnipc) + s(gdi) + s(gii), 
                  data = df, 
                  family = Gamma(link = "log"))
 
@@ -76,11 +77,12 @@ significance_table <- summary(gam_model)$s.table
 # Print the significance table
 kable(significance_table)
 ```
-In our analysis, it is evident that three specific variables, namely "Average Years of Schooling" (mys), "Gender Inequality Index" (GII) and "University Score per Million Population" (uni_score_pmc), were found to be statistically significant in the context of the GAM model we are trying to fit. These results indicate that these variables exert substantial influence on the outcome of our model and that their contributions are statistically significant.
 
-Collectively, these results underscore the importance of mys, GII and uni_score_pmc as influential factors contributing to the variability of our response variable. They constitute essential components of our model, enriching its ability to capture and explain the underlying patterns in the data.
+In our analysis, it is evident that three specific variables, namely "Average Years of Schooling" (mys), "Gender Inequality Index" (gii) and "Gender Development Index" (gdi), were found to be statistically significant in the context of the GAM model we are trying to fit. These results indicate that these variables exert substantial influence on the outcome of our model and that their contributions are statistically significant.
 
+Collectively, these results underscore the importance of mys and GII  as influential factors contributing to the variability of our response variable. They constitute essential components of our model, enriching its ability to capture and explain the underlying patterns in the data.
 
+These findings collectively underscore the importance of mys, GII, and GDI as influential factors contributing to the variability of our response variable. They constitute essential components of our model, enriching its ability to capture and explain the underlying patterns in the data. Furthermore, the presence of GII and GDI in the model emphasizes the significance of addressing gender-based disparities and promoting gender equity as integral components of broader development efforts. A higher GII value reflects greater gender inequality, suggesting that reducing such disparities is associated with improvements in the Total Score. Similarly, a higher GDI indicates better gender development outcomes, highlighting the role of gender equity as a contributing factor to overall development.
 
 To analyze the results of the modeling, it is beneficial to closely examine the QQ plot of the residuals, as it offers insights into the distribution of model errors.
 ```{r out.width = "90%",results = TRUE}
@@ -101,10 +103,10 @@ ggplot(qq_df, aes(x = Theoretical, y = Sample)) +
 
 
 ```
+
 In the QQ plot of the residuals for the Generalized Additive Model (GAM), we can observe that the residuals tend to deviate slightly below the theoretical normal line. This behavior suggests a minor departure from the normal distribution, indicating that the GAM model may not perfectly capture the distribution of the residuals. While the deviations are relatively small, it's important to note that the normality assumption of the residuals may not be fully met. Further investigation and potentially considering alternative models could be beneficial to improve the model fit and better capture the data distribution.
 
-
-To enhance the goodness of fit of the generalized additive model (GAM), a stratification strategy is employed, dividing the dataset into three distinct categories based on quantile divisions of the Total Score. This approach aims to improve model performance and enhance the accuracy of estimates.
+To enhance the goodness of fit of the generalized additive model (GAM), a stratification strategy is employed. This strategy involves dividing the entire dataset into three distinct categories based on quantile divisions of the Total Score. It's important to note that this stratification encompasses all observations across all years simultaneously, without any year-based filtering. The primary objective of this approach is to improve overall model performance and enhance the accuracy of estimates.
 
 ```{r out.width = "90%", results = TRUE}
 
@@ -139,6 +141,7 @@ ggplot(df, aes(x = gdp.per_capita, y = Total.score, color = Score_Category)) +
 
 
 ```
+
 To analyze the results of the modeling, it is beneficial to closely examine the QQ plot of the residuals, as it offers insights into the distribution of model errors.
 ```{r out.width = "90%", results = TRUE}
 
@@ -152,7 +155,7 @@ fit_gam_qq <- function(category) {
   # Fit a GAM model with specified variables
   gam_model <- gam(
     Total.score ~ s(gdp.per_capita) + s(hdi) + s(le) + s(eys) + s(mys) +
-                 s(gnipc) + s(gdi) + s(gii) + s(uni_score_pmc),
+                 s(gnipc) + s(gdi) + s(gii),
     data = category_data,
     family = Gamma
   )
@@ -186,6 +189,7 @@ high_score_qq <- fit_gam_qq("High Total Score")
 grid.arrange(low_score_qq, middle_score_qq, high_score_qq, ncol = 3)
 
 ```
+
 The QQ plots of the residuals for the three income categories do not reveal any substantial improvement in the goodness of fit of the GAM model. It suggests that further investigation is required to achieve a more accurate fit to the data.
 An intriguing observation is that the model's accuracy appears to diminish as the total score increases.
 
@@ -198,7 +202,7 @@ Following the preprocessing steps conducted initially, a scoring system was impl
 ```{r results = TRUE}
 
 # Fit a GAM model with a suitable distribution family and link function
-gam_model <- gam(Points ~ s(gdp.per_capita) + s(hdi) + s(le) + s(eys) + s(mys) + s(gnipc) + s(gdi) + s(gii)+ s(uni_score_pmc), 
+gam_model <- gam(Points ~ s(gdp.per_capita) + s(hdi) + s(le) + s(eys) + s(mys) + s(gnipc) + s(gdi) + s(gii), 
                  data = df, 
                  family = Gamma(link = "log"))
 
@@ -208,7 +212,12 @@ significance_table <- summary(gam_model)$s.table
 # Print the significance table
 kable(significance_table)
 ```
-In the context of our current analysis, several factors have emerged as statistically significant contributors to the Generalized Additive Model (GAM) we are developing. These factors encompass a range of socio-economic and developmental indicators, each playing a distinct role in shaping our model.
+
+In the context of this analysis, several socio-economic and developmental indicators have emerged as statistically significant contributors to the Generalized Additive Model (GAM) under examination. These variables collectively add complexity to the GAM, with each making a distinctive and statistically significant impact on the model's ability to understand and elucidate the observed variability within the response variable.
+
+Among these variables, "Average Years of Schooling" (mys) underscores the pivotal role of education in human development, enhancing the model's predictive capabilities. Additionally, "Gross National Income (GNI) per capita" (gnipc) emphasizes the critical importance of economic well-being within the broader context of overall development.
+
+Furthermore, the "Gender Development Index" (GDI) indicates that nations with equitable gender development tend to achieve higher Total Scores, underscoring the significance of gender equity in contributing to overall development. Similarly, the "Gender Inequality Index" (GII) highlights the need to address and reduce gender-based inequalities, given its substantial influence over Total Scores. These findings collectively underscore the intricate interplay between socio-economic and developmental factors and the response variable.
 
 These variables collectively contribute to the complexity of our GAM, with each making a unique and statistically significant impact on the model's ability to capture and explain the variability in our response variable. Their inclusion underscores the multidimensional nature of human development and its intricate interplay with the response variable under investigation.
 ```{r out.width = "90%", results = TRUE}
@@ -228,6 +237,7 @@ ggplot(qq_df, aes(x = Theoretical, y = Sample)) +
 
 
 ```
+
 The QQ plot analysis, when applied to the "Points" variable instead of the "Total Score," does not yield a significant improvement. This suggests that switching from "Total Score" to "Points" does not result in a better fit of the Generalized Additive Model (GAM) to the data.
 
 
