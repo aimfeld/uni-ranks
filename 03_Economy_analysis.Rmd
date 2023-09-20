@@ -39,12 +39,12 @@ The exploratory analysis progresses by scrutinizing the factors that impact the 
 
 ```{r results = TRUE}
 
-# Subset the DataFrame
+
 selected_df <- df %>%
   select(Total.score, hdi, le, eys, mys, gnipc, gdi, gii, gdp.per_capita) %>%
   na.omit()
 
-# Create individual scatterplots using ggplot2
+
 plots <- list()
 
 for (col_name in colnames(selected_df)[-1]) {  # Exclude Total.score
@@ -55,7 +55,7 @@ for (col_name in colnames(selected_df)[-1]) {  # Exclude Total.score
   plots[[col_name]] <- p
 }
 
-# Combine and arrange the plots
+
 
 grid.arrange(grobs = plots, ncol = 3)
 ```
@@ -71,10 +71,9 @@ gam_model <- gam(Total.score ~ s(gdp.per_capita) + s(hdi) + s(le) + s(eys) + s(m
                  data = df, 
                  family = Gamma(link = "log"))
 
-# Create a summary table for coefficients, standard errors, t-values, and p-values
+
 significance_table <- summary(gam_model)$s.table
 
-# Print the significance table
 kable(significance_table)
 ```
 
@@ -86,7 +85,7 @@ These findings collectively underscore the importance of mys, GII, and GDI as in
 
 To analyze the results of the modeling, it is beneficial to closely examine the QQ plot of the residuals, as it offers insights into the distribution of model errors.
 ```{r out.width = "90%",results = TRUE}
-# Create a QQ plot for the residuals
+# Create a QQ plot
 qq_data <- qqnorm(gam_model$residuals, plot.it = FALSE)
 qq_df <- data.frame(Theoretical = qq_data$x, Sample = qq_data$y)
 
@@ -110,13 +109,13 @@ To enhance the goodness of fit of the generalized additive model (GAM), a strati
 
 ```{r out.width = "90%", results = TRUE}
 
-# Define the number of quantiles (in this case, 3 for three categories)
+# Define the number of quantiles 
 num_quantiles <- 3
 
-# Compute the quantiles of the 'Total Score' variable
+# Compute the quantiles
 quantile_breaks <- quantile(df$Total.score, probs = seq(0, 1, length.out = num_quantiles + 1))
 
-# Create a new variable 'Income_Category' based on 'Total Score' quantiles
+# Create a new variable 
 df <- df %>%
   mutate(Score_Category = cut(
     Total.score,
@@ -125,7 +124,7 @@ df <- df %>%
     include.lowest = TRUE
   ))
 
-# Create a scatter plot with the new income categories and a legend
+# Create a scatter plot 
 ggplot(df, aes(x = gdp.per_capita, y = Total.score, color = Score_Category)) +
   geom_point() +
   labs(
@@ -145,14 +144,12 @@ ggplot(df, aes(x = gdp.per_capita, y = Total.score, color = Score_Category)) +
 To analyze the results of the modeling, it is beneficial to closely examine the QQ plot of the residuals, as it offers insights into the distribution of model errors.
 ```{r out.width = "90%", results = TRUE}
 
-
-# Define a function to fit GAM models and generate QQ plots
 fit_gam_qq <- function(category) {
   # Filter data for the specific score category
   category_data <- df %>%
     filter(Score_Category == category)
   
-  # Fit a GAM model with specified variables
+  # Fit a GAM model 
   gam_model <- gam(
     Total.score ~ s(gdp.per_capita) + s(hdi) + s(le) + s(eys) + s(mys) +
                  s(gnipc) + s(gdi) + s(gii),
@@ -180,7 +177,7 @@ fit_gam_qq <- function(category) {
   return(qq_plot)
 }
 
-# Fit GAM models and generate QQ plots for each score category
+
 low_score_qq <- fit_gam_qq("Low Total Score")
 middle_score_qq <- fit_gam_qq("Middle Total Score")
 high_score_qq <- fit_gam_qq("High Total Score")
@@ -201,12 +198,12 @@ Following the preprocessing steps conducted initially, a scoring system was impl
 
 ```{r results = TRUE}
 
-# Fit a GAM model with a suitable distribution family and link function
+# Fit a GAM model
 gam_model <- gam(Points ~ s(gdp.per_capita) + s(hdi) + s(le) + s(eys) + s(mys) + s(gnipc) + s(gdi) + s(gii), 
                  data = df, 
                  family = Gamma(link = "log"))
 
-# Create a summary table for coefficients, standard errors, t-values, and p-values
+
 significance_table <- summary(gam_model)$s.table
 
 # Print the significance table
@@ -221,7 +218,7 @@ Furthermore, the "Gender Development Index" (GDI) indicates that nations with eq
 
 These variables collectively contribute to the complexity of our GAM, with each making a unique and statistically significant impact on the model's ability to capture and explain the variability in our response variable. Their inclusion underscores the multidimensional nature of human development and its intricate interplay with the response variable under investigation.
 ```{r out.width = "90%", results = TRUE}
-# Create a QQ plot for the residuals
+# QQ plot for the residuals
 qq_data <- qqnorm(gam_model$residuals, plot.it = FALSE)
 qq_df <- data.frame(Theoretical = qq_data$x, Sample = qq_data$y)
 
