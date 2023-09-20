@@ -8,56 +8,232 @@ output:
 ---
 
 ```{r}
-library(dplyr)
-library(tidyverse)
+library(ggplot2)
+library(gridExtra)
+library(mgcv)
+```
+# Economic analysis
+
+## Exploratory analysis
+
+In this section, an exploration of the intricate connection between education, HDI scores and GDP per capita will be conducted. The focus is on examining the various factors influencing this relationship and shedding light on the significance of education as a driver of economic growth and societal advancement. The objective is to gain a deeper understanding of how a nation's economic well-being and human development factors affect university rankings.
+
+To gain an initial understanding of GDP per capita, it is crucial to analyze its distribution, which exhibits a noticeable right-skew. This skewness suggests that most countries in the dataset have lower GDP per capita values, highlighting the prevalence of lower income levels among the nations included.
+
+```{r out.width = "80%", results = TRUE}
+df_2018 <- df %>%filter(Year == 2017) %>%distinct(Country, .keep_all = TRUE)
+
+ggplot(df_2018, aes(x = gdp.per_capita)) +
+  geom_histogram(
+    bins = 9,
+    fill = "#3399FF",
+    color = "black"
+  ) +
+  labs(
+    x = "GDP per capita",
+    y = "Number of Countries"
+  )
 ```
 
+The exploratory analysis progresses by scrutinizing the factors that impact the total points. The aim of this analysis is to detect potential predictors and assess the connections between variables. To begin this exploration, a series of variables were plotted alongside the total score.
 
+```{r results = TRUE}
 
+# Subset the DataFrame
+selected_df <- df %>%
+  select(Total.score, hdi, le, eys, mys, gnipc, gdi, gii,  uni_score_pmc, gdp.per_capita) %>%
+  na.omit()
 
-Research question:
-"Is there a relation between a level of education and GDP?"
+# Create individual scatterplots using ggplot2
+plots <- list()
 
-Loading gdp per capita 
-```{r}
+for (col_name in colnames(selected_df)[-1]) {  # Exclude Total.score
+  p <- ggplot(selected_df, aes(x = .data[[col_name]], y = Total.score)) +
+    geom_point(aes(color = Total.score), size = 1.5) +
+    labs(x = "Total.score", y = col_name) +
+    guides(color = FALSE)
+  plots[[col_name]] <- p
+}
 
-df_gdp_pc <- read.csv('data/gdp_per_capita.csv',
-               sep = ',')
+# Combine and arrange the plots
+
+grid.arrange(grobs = plots, ncol = 3)
 ```
+## Modeling Total Score
+Utilizing correlation analysis, variables presenting non-linear patterns were identified. Subsequently, a Generalized Additive Model (GAM) was chosen to build the model, incorporating the following variables: Total.score, hdi, le, eys, mys, gnipc, gdi, gii, uni_score, uni_score_pmc, gdp.per_capita.
 
 
-Loading GDP
-```{r}
-df_gdp <- read.csv('data/gdp.csv')
+
+```{r results = TRUE}
+
+gam_model <- gam(Total.score ~ s(gdp.per_capita) + s(hdi) + s(le) + s(eys) + s(mys) + s(gnipc) + s(gdi) + s(gii)+ s(uni_score_pmc), 
+                 data = df, 
+                 family = Gamma(link = "log"))
+
+# Create a summary table for coefficients, standard errors, t-values, and p-values
+significance_table <- summary(gam_model)$s.table
+
+# Print the significance table
+kable(significance_table)
+```
+In our analysis, it is evident that three specific variables, namely "Average Years of Schooling" (mys), "Gender Inequality Index" (GII) and "University Score per Million Population" (uni_score_pmc), were found to be statistically significant in the context of the GAM model we are trying to fit. These results indicate that these variables exert substantial influence on the outcome of our model and that their contributions are statistically significant.
+
+Collectively, these results underscore the importance of mys, GII and uni_score_pmc as influential factors contributing to the variability of our response variable. They constitute essential components of our model, enriching its ability to capture and explain the underlying patterns in the data.
+
+
+
+To analyze the results of the modeling, it is beneficial to closely examine the QQ plot of the residuals, as it offers insights into the distribution of model errors.
+```{r out.width = "90%",results = TRUE}
+# Create a QQ plot for the residuals
+qq_data <- qqnorm(gam_model$residuals, plot.it = FALSE)
+qq_df <- data.frame(Theoretical = qq_data$x, Sample = qq_data$y)
+
+ggplot(qq_df, aes(x = Theoretical, y = Sample)) +
+  geom_point(color = "blue", size = 2, alpha = 0.6) +
+  geom_abline(intercept = 0, slope = 1, color = "red", linetype = "dashed") +
+  labs(
+    title = "QQ Plot of the GAM Model Residuals",
+    x = "Theoretical Quantiles",
+    y = "Sample Quantiles"
+  ) +
+  theme_minimal()
+
 
 
 ```
+In the QQ plot of the residuals for the Generalized Additive Model (GAM), we can observe that the residuals tend to deviate slightly below the theoretical normal line. This behavior suggests a minor departure from the normal distribution, indicating that the GAM model may not perfectly capture the distribution of the residuals. While the deviations are relatively small, it's important to note that the normality assumption of the residuals may not be fully met. Further investigation and potentially considering alternative models could be beneficial to improve the model fit and better capture the data distribution.
 
 
-```{r}
+To enhance the goodness of fit of the generalized additive model (GAM), a stratification strategy is employed, dividing the dataset into three distinct categories based on quantile divisions of the Total Score. This approach aims to improve model performance and enhance the accuracy of estimates.
 
-years.analysis <- c("X2005", "X2006", "X2007", "X2008", "X2009", "X2010", "X2011", "X2012", "X2013", "X2014", "X2015", "X2016", "X2017",     "X2018")
-df_gdp <- pivot_longer(df_gdp, cols=years.analysis , names_to = "Year", values_to = "gdp.per_capita")
-df_gdp$Year <- as.numeric(substring(df_gdp$Year, 2))
+```{r out.width = "90%", results = TRUE}
+
+# Define the number of quantiles (in this case, 3 for three categories)
+num_quantiles <- 3
+
+# Compute the quantiles of the 'Total Score' variable
+quantile_breaks <- quantile(df$Total.score, probs = seq(0, 1, length.out = num_quantiles + 1))
+
+# Create a new variable 'Income_Category' based on 'Total Score' quantiles
+df <- df %>%
+  mutate(Score_Category = cut(
+    Total.score,
+    breaks = quantile_breaks,
+    labels = c("Low Total Score", "Middle Total Score", "High Total Score"),
+    include.lowest = TRUE
+  ))
+
+# Create a scatter plot with the new income categories and a legend
+ggplot(df, aes(x = gdp.per_capita, y = Total.score, color = Score_Category)) +
+  geom_point() +
+  labs(
+    x = "GDP per Capita",
+    y = "Total Score",
+    title = "Scatter Plot of the Stratified Total Score"
+  ) +
+  scale_color_manual(
+    values = c("Low Total Score" = "#FF7F7F", "Middle Total Score" = "#7F7FFF", "High Total Score" = "#7FFF7F"),
+    name = "Score Category"
+  ) +
+  theme_minimal()
+
 
 ```
+To analyze the results of the modeling, it is beneficial to closely examine the QQ plot of the residuals, as it offers insights into the distribution of model errors.
+```{r out.width = "90%", results = TRUE}
 
-We focus just from 2005 and 2018:
-```{r}
 
-df_gdp <- df_gdp[c('Country.Name', 'Code', 'Year', 'gdp.per_capita')]
-str(df_gdp)
+# Define a function to fit GAM models and generate QQ plots
+fit_gam_qq <- function(category) {
+  # Filter data for the specific score category
+  category_data <- df %>%
+    filter(Score_Category == category)
+  
+  # Fit a GAM model with specified variables
+  gam_model <- gam(
+    Total.score ~ s(gdp.per_capita) + s(hdi) + s(le) + s(eys) + s(mys) +
+                 s(gnipc) + s(gdi) + s(gii) + s(uni_score_pmc),
+    data = category_data,
+    family = Gamma
+  )
+  
+  # Get the QQ residuals
+  qq_residuals <- residuals(gam_model, type = "response")
+  
+  # Create a QQ plot
+  qq_data <- qqnorm(qq_residuals, plot.it = FALSE)
+  qq_df <- data.frame(Theoretical = qq_data$x, Sample = qq_data$y)
+  
+  qq_plot <- ggplot(qq_df, aes(x = Theoretical, y = Sample)) +
+    geom_point(color = "blue", size = 2, alpha = 0.6) +
+    geom_abline(intercept = 0, slope = 1, color = "red", linetype = "dashed") +
+    labs(
+      title = paste("QQ Plot ", category),
+      x = "Theoretical Quantiles",
+      y = "Sample Quantiles"
+    ) +
+    theme_minimal()
+  
+  return(qq_plot)
+}
+
+# Fit GAM models and generate QQ plots for each score category
+low_score_qq <- fit_gam_qq("Low Total Score")
+middle_score_qq <- fit_gam_qq("Middle Total Score")
+high_score_qq <- fit_gam_qq("High Total Score")
+
+# Arrange QQ plots in a grid
+grid.arrange(low_score_qq, middle_score_qq, high_score_qq, ncol = 3)
+
 ```
+The QQ plots of the residuals for the three income categories do not reveal any substantial improvement in the goodness of fit of the GAM model. It suggests that further investigation is required to achieve a more accurate fit to the data.
+An intriguing observation is that the model's accuracy appears to diminish as the total score increases.
 
-Joining datasets:
-```{r}
-df_eco <- left_join(x = df, y = df_gdp,  by = c( "ISO3.CODE"= "Code", "Year" ))
+
+## Modeling Score based on the exponential decay
+
+Following the preprocessing steps conducted initially, a scoring system was implemented for universities based on their rankings, utilizing an exponential decay model. The objective was to assign significantly higher scores to top-ranked universities while introducing a gradual decrease in score for lower-ranked institutions. The focus shifted from the total score to the newly assigned scores to evaluate how effectively the GAM model fits this updated data. 
+
+
+```{r results = TRUE}
+
+# Fit a GAM model with a suitable distribution family and link function
+gam_model <- gam(Points ~ s(gdp.per_capita) + s(hdi) + s(le) + s(eys) + s(mys) + s(gnipc) + s(gdi) + s(gii)+ s(uni_score_pmc), 
+                 data = df, 
+                 family = Gamma(link = "log"))
+
+# Create a summary table for coefficients, standard errors, t-values, and p-values
+significance_table <- summary(gam_model)$s.table
+
+# Print the significance table
+kable(significance_table)
 ```
+In the context of our current analysis, several factors have emerged as statistically significant contributors to the Generalized Additive Model (GAM) we are developing. These factors encompass a range of socio-economic and developmental indicators, each playing a distinct role in shaping our model.
+
+These variables collectively contribute to the complexity of our GAM, with each making a unique and statistically significant impact on the model's ability to capture and explain the variability in our response variable. Their inclusion underscores the multidimensional nature of human development and its intricate interplay with the response variable under investigation.
+```{r out.width = "90%", results = TRUE}
+# Create a QQ plot for the residuals
+qq_data <- qqnorm(gam_model$residuals, plot.it = FALSE)
+qq_df <- data.frame(Theoretical = qq_data$x, Sample = qq_data$y)
+
+ggplot(qq_df, aes(x = Theoretical, y = Sample)) +
+  geom_point(color = "blue", size = 2, alpha = 0.6) +
+  geom_abline(intercept = 0, slope = 1, color = "red", linetype = "dashed") +
+  labs(
+    title = "QQ Plot for GAM Model Residuals",
+    x = "Theoretical Quantiles",
+    y = "Sample Quantiles"
+  ) +
+  theme_minimal()
 
 
-```{r}
-df_eco
 ```
+The QQ plot analysis, when applied to the "Points" variable instead of the "Total Score," does not yield a significant improvement. This suggests that switching from "Total Score" to "Points" does not result in a better fit of the Generalized Additive Model (GAM) to the data.
+
+
+
+
+
 
 
 

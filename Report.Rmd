@@ -11,7 +11,7 @@ urlcolor: blue
 ---
 ```{r knitr-setup, include = FALSE}
 library(knitr)
-
+library(tidyverse)
 # By default, code (echo = FALSE) and output (results = FALSE) are not shown.
 opts_chunk$set(message = FALSE, echo = FALSE, results = FALSE, warning = FALSE)
 ```
@@ -20,8 +20,8 @@ opts_chunk$set(message = FALSE, echo = FALSE, results = FALSE, warning = FALSE)
 ```
 ```{r child = '02_Data_preparation.Rmd'}
 ```
-<--```{r child = '03_Economy_analysis.Rmd'}
-``` -->
+```{r child = '03_Economy_analysis.Rmd'}
+```
 ```{r child = '04_Human_development.Rmd'}
 ```
 ```{r child = '05_Conclusion.Rmd'}

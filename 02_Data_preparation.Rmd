@@ -1,3 +1,8 @@
+---
+output:
+  pdf_document: default
+  html_document: default
+---
 # Data preparation
 
 ## Datasets
@@ -33,6 +38,11 @@ df_uni <- read.csv('data/shanghai-world-university-ranking.csv',
 # Remove unnecessary columns
 df_uni <- df_uni %>% select(-c(Geo.Shape))
 
+
+# Split the Location column into Latitude and Longitude
+df_uni <- df_uni %>% separate(Geo.Point.2D, into = c("Latitude", "Longitude"), sep = ", ")
+df_uni$Latitude <- as.numeric(df_uni$Latitude)
+df_uni$Longitude <- as.numeric(df_uni$Longitude)
 # Rename columns
 df_uni <- df_uni %>% rename("Rank" = "World.rank.integer")
 
@@ -51,8 +61,17 @@ sort(unique(df_uni$Rank))
 ```
 
 ### Economic dataset
+To comprehensively assess a country's economic landscape, one of the most reliable indicators is the country's GDP. Specifically, it should account for population size to avoid overestimating the economic strength of larger nations. Therefore, we utilize the GDP per capita as a more accurate metric. 
 
-todo
+- Name: World GDP (GDP per capita)
+- Dataset: https://www.kaggle.com/datasets/zgrcemta/world-gdpgdp-gdp-per-capita-and-annual-growths
+
+The dataset consists of information for 206 countries, including their GDP per capita values from 1960 to 2020.
+```{r results = TRUE}
+df_gdp<- read.csv('data/gdp_per_capita.csv',
+               sep = ',')
+kable(head(df_gdp %>% select(c(Country.Name, Code, X1990, X2020)), 10))
+```
 
 ### Human Development Index (HDI)
 
@@ -79,7 +98,7 @@ Total_score <- function(df) {
   return(score)
 }
 
-df_uni$Total_score <- Total_score(df_uni)
+df_uni$Total.score <- Total_score(df_uni)
 ```
 
 ### Univerity rank aggregation
@@ -117,9 +136,16 @@ kable(head(df_uni_agg %>% filter(ISO3.CODE == 'USA'), 5))
 ```
 
 ### Economic dataset
+To pursue our research goals, we intend to refine the GDP dataset to include the years from 2005 to 2018, aligning with the time coverage of the university ranking data. After this adjustment, we will proceed to restructure the dataset into a long format to facilitate our analytical efforts.
 
-todo
 
+```{r results = TRUE}
+years.analysis <- c("X2005", "X2006", "X2007", "X2008", "X2009", "X2010", "X2011", "X2012", "X2013", "X2014", "X2015", "X2016", "X2017", "X2018")
+df_gdp_l <- pivot_longer(df_gdp, cols=years.analysis , names_to = "Year", values_to = "gdp.per_capita")
+df_gdp_l$Year <- as.numeric(substring(df_gdp_l$Year, 2))
+kable(head(df_gdp_l %>% filter(Code == 'USA') %>% select(c(Country.Name, Code ,Year, gdp.per_capita)), 5))
+df_gdp_l <- df_gdp_l %>% select(c(Country.Name, Code ,Year, gdp.per_capita))
+```
 ### HDI dataset
 
 From the Human Development Index (HDI) dataset, the timelines of the following indicators of interest were picked:
@@ -155,6 +181,7 @@ df_hdi_long <- pivot_longer(
     names_to = "feature",
     values_to = "value")
 ```
+
 ```{r}
 # Split feature into indicator and year columns by using only the last separator
 df_hdi_long <- df_hdi_long %>%
@@ -195,6 +222,7 @@ df_pop <- pivot_longer(
 df_pop$year <- as.integer(df_pop$year)
 df_hdi <- left_join(df_hdi, df_pop, by = c("year" = "year", "iso3" = "country"))
 ```
+
 ```{r}
 # Adding university score per pmillion capita
 df_hdi$uni_score_pmc <- df_hdi$uni_score / df_hdi$population * 1000000
@@ -213,5 +241,23 @@ kable(df_hdi %>%
 
 ```{r}
 write.csv(df_hdi, 'app_data/hdi.csv')
+```
+
+## Merge datasets
+Having all three core datasets available, it is now appropriate to combine them into one complete dataset.
+
+Our first step was to merge the pre-existing dataset with the human development dataset. Subsequently, it has been followed a similar process to integrate the university rankings and GDP per capita datasets, using country codes and years as the key merging parameters.
+```{r}
+df <- left_join(x = df_uni, y = df_hdi,  by = c( "ISO3.CODE"= "iso3", "Year"="year"))
+df <- left_join(x = df, y = df_gdp_l,  by = c( "ISO3.CODE"= "Code", "Year" )) %>% na.omit()
+```
+
+```{r results = TRUE}
+kable(df %>%
+    mutate(across(is.numeric, round, digits=2)) %>%
+    select(c(country,University, Year, hdi, le, mys, gnipc, uni_score, uni_count, gdp.per_capita)) %>%
+    filter(country == 'Germany' & Year >= 2005) %>%
+    head(5)
+)
 ```
 

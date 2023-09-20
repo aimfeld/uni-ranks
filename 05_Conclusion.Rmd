@@ -1,3 +1,3 @@
 # Conclusion
 
-todo
+In summary, the generalized additive model (GAM) proved its reliability and adaptability, especially when it used "points" as the target variable. This choice allowed our model to include a wider range of predictor variables, thus improving its ability to capture and decipher the complexities of the dataset. As a result, GAM emerges as the most reliable and robust modeling technique that can accommodate a wide range of variables and provide valuable insights for our analysis. This expertise can be leveraged to improve score predictions by leveraging socio-economic and developmental indicators.
